@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema">
+	<element name="test_case">
+		<complexType>
+			<sequence minOccurs="1">
+				<element name="device_type" minOccurs="1" maxOccurs="1"></element>
+				<element name="login" minOccurs="1" maxOccurs="1"></element>
+				<element name="password" minOccurs="1" maxOccurs="1"></element>
+
+
+				<element name="request" minOccurs="1" maxOccurs="unbounded">
+					<complexType>
+						<sequence>
+							<element name="request_command" type="string" maxOccurs="1"
+								minOccurs="1"></element>
+							<element name="response_message" type="string" maxOccurs="1"
+								minOccurs="1"></element>
+							<element name="response_prompt" type="string" maxOccurs="1"
+								minOccurs="1"></element>
+						</sequence>
+						<attribute name="delay_in_ms" type="long"></attribute>
+					</complexType>
+				</element>
+
+			</sequence>
+		</complexType>
+	</element>
+</schema>

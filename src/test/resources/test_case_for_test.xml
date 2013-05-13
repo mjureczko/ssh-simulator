@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<test_case xmlns:tcs="test_case_schema.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns="http://www.networkedassets.com/test_case_schema">
+
+	<login>login</login>
+	<password>password</password>
+	<device_type>CMTS</device_type>
+
+	<request delay_in_ms="1">
+		<request_command>command1</request_command>
+		<response_message>responseMsg1</response_message>
+		<response_prompt>prompt1#</response_prompt>
+	</request>
+
+	<request delay_in_ms="2">
+		<request_command>command2</request_command>
+		<response_message>responseMsg2</response_message>
+		<response_prompt>prompt2#</response_prompt>
+	</request>
+
+</test_case>
