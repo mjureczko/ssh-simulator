@@ -2,14 +2,26 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+    </parent>
+    
 	<artifactId>ssh-simulator</artifactId>
 	<name>SSH based simulator of network devices</name>
 	<groupId>org.na</groupId>
 	<version>0.1-SNAPSHOT</version>
 
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
 	<repositories>
-
 		<repository>
 			<id>sshd_repository</id>
 			<url>http://repo1.maven.org/maven2</url>
@@ -20,42 +32,6 @@
 			<snapshots>
 				<enabled>true</enabled>
 				<updatePolicy>daily</updatePolicy>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>snapshots</id>
-			<url>http://192.168.10.170:8080/nexus/content/repositories/snapshots</url>
-			<releases>
-				<enabled>false</enabled>
-				<updatePolicy>daily</updatePolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>daily</updatePolicy>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>releases</id>
-			<url>http://192.168.10.170:8080/nexus/content/repositories/releases</url>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>daily</updatePolicy>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-				<updatePolicy>daily</updatePolicy>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>3rdparty</id>
-			<url>http://192.168.10.170:8080/nexus/content/repositories/thirdparty</url>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>never</updatePolicy>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-				<updatePolicy>never</updatePolicy>
 			</snapshots>
 		</repository>
 	</repositories>
@@ -178,25 +154,18 @@
 		<url>http://www.networkedassets.pl</url>
 	</organization>
 	<scm>
-		<url>https://192.168.10.249:18080/svn/narepos/opensource/ssh-simulator</url>
-		<connection>scm:svn:https://192.168.10.249:18080/svn/narepos/opensource/ssh-simulator</connection>
-		<developerConnection>scm:svn:https://192.168.10.249:18080/svn/narepos/opensource/ssh-simulator</developerConnection>
+		<url>https://github.com/NetworkedAssets/ssh-simulator.git</url>
+		<connection>scm:git:https://github.com/NetworkedAssets/ssh-simulator.git</connection>
+		<developerConnection>scm:git:https://github.com/NetworkedAssets/ssh-simulator.git</developerConnection>
 	</scm>
 	<ciManagement>
 		<url>http://tanatos:8080/hudson/job/ssh-simulator/</url>
 		<system>Hudson</system>
 	</ciManagement>
 
-	<!-- this is for the distribution of an artifact -->
-	<distributionManagement>
-		<snapshotRepository>
-			<id>snapshots</id>
-			<url>http://192.168.10.170:8080/nexus/content/repositories/snapshots</url>
-		</snapshotRepository>
-		<repository>
-			<id>releases</id>
-			<url>http://192.168.10.170:8080/nexus/content/repositories/releases</url>
-		</repository>
-	</distributionManagement>
-
+	<url>https://github.com/NetworkedAssets/ssh-simulator</url>
+	<issueManagement>
+		<url>https://github.com/NetworkedAssets/ssh-simulator/issues</url>
+		<system>github</system>
+	</issueManagement>
 </project>
