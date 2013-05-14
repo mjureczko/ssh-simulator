@@ -17,10 +17,6 @@ package org.na.ssh.simulator.reporting.messages;
 
 import java.io.Serializable;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import org.na.ssh.simulator.reporting.commands.CommandToServer;
 
 /**
@@ -29,13 +25,36 @@ import org.na.ssh.simulator.reporting.commands.CommandToServer;
  * @author Patryk Chrusciel
  * 
  */
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
+
 public class MessageToServer implements Serializable {
-	/**
-	 * 
-	 */
+
+	/** */
 	private static final long serialVersionUID = 1L;
+
+	/** NoArgsConstructor */
+	public MessageToServer() {
+
+	}
+
+	/** AllArgsConstructor */
+	public MessageToServer(CommandToServer cmdToServer) {
+		this.setCmdToServer(cmdToServer);
+	}
+
 	private CommandToServer cmdToServer;
+
+	/**
+	 * @param cmdToServer
+	 *            the cmdToServer to set
+	 */
+	public void setCmdToServer(CommandToServer cmdToServer) {
+		this.cmdToServer = cmdToServer;
+	}
+
+	/**
+	 * @return the cmdToServer
+	 */
+	public CommandToServer getCmdToServer() {
+		return cmdToServer;
+	}
 }

@@ -17,12 +17,9 @@ package org.na.ssh.simulator.shell;
 
 import java.io.IOException;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.apache.sshd.SshServer;
 import org.apache.sshd.server.PasswordAuthenticator;
 import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
-import org.na.ssh.simulator.shell.AbstractDeviceShellFactory;
 
 /**
  * A simulator for device.
@@ -34,23 +31,19 @@ public class DeviceSimulator {
 	
 	private static final String HOST_KEY_PROVIDER = "hostkey.ser";
 	
-	@Getter
 	private AbstractDeviceShellFactory shell;
-	
-	@Getter
-	@Setter
-	protected SshServer sshd;
+	private SshServer sshd;
 	
 	public DeviceSimulator(AbstractDeviceShellFactory shellFactory,
 			PasswordAuthenticator authenticator, String host, int port) {
-		sshd = SshServer.setUpDefaultServer();
-		sshd.setPort(port);
-		sshd.setHost(host);
+		setSshd(SshServer.setUpDefaultServer());
+		getSshd().setPort(port);
+		getSshd().setHost(host);
 		
-		sshd.setKeyPairProvider(new SimpleGeneratorHostKeyProvider(HOST_KEY_PROVIDER));
-		sshd.setPasswordAuthenticator(authenticator);
-		this.shell = shellFactory;
-		sshd.setShellFactory(shellFactory);
+		getSshd().setKeyPairProvider(new SimpleGeneratorHostKeyProvider(HOST_KEY_PROVIDER));
+		getSshd().setPasswordAuthenticator(authenticator);
+		this.setShell(shellFactory);
+		getSshd().setShellFactory(shellFactory);
 		
 	}
 	
@@ -60,7 +53,7 @@ public class DeviceSimulator {
 	 * @throws IOException
 	 */
 	public void startSimulation() throws IOException {
-		sshd.start();
+		getSshd().start();
 	}
 	
 	/**
@@ -70,8 +63,36 @@ public class DeviceSimulator {
 	 */
 	public void stopSimulation() throws InterruptedException {
 		
-		sshd.stop();
+		getSshd().stop();
 		
+	}
+
+	/**
+	 * @param shell the shell to set
+	 */
+	public void setShell(AbstractDeviceShellFactory shell) {
+		this.shell = shell;
+	}
+
+	/**
+	 * @return the shell
+	 */
+	public AbstractDeviceShellFactory getShell() {
+		return shell;
+	}
+
+	/**
+	 * @param sshd the sshd to set
+	 */
+	public void setSshd(SshServer sshd) {
+		this.sshd = sshd;
+	}
+
+	/**
+	 * @return the sshd
+	 */
+	public SshServer getSshd() {
+		return sshd;
 	}
 	
 }

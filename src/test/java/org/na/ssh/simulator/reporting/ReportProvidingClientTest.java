@@ -21,7 +21,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 
 import junit.framework.Assert;
-import lombok.extern.log4j.Log4j;
 
 import org.junit.Test;
 import org.na.ssh.simulator.reporting.commands.CommandToServer;
@@ -33,9 +32,10 @@ import org.na.ssh.simulator.reporting.messages.MessageToServer;
  * @author Patryk Chrusciel
  * 
  */
-@Log4j
 public class ReportProvidingClientTest {
 	private static final String HOST = "localhost";
+	private static final org.apache.log4j.Logger log = org.apache.log4j.Logger
+			.getLogger(ReportProvidingClientTest.class);
 
 	/**
 	 * @throws Exception

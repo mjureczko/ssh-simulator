@@ -18,10 +18,6 @@ package org.na.ssh.simulator.shell;
 import java.io.IOException;
 import java.util.List;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.log4j.Log4j;
-
 import org.apache.sshd.common.Factory;
 import org.apache.sshd.server.Command;
 import org.na.ssh.simulator.control.RequestEntryControl;
@@ -36,18 +32,16 @@ import org.na.ssh.simulator.reporting.ReportProvidingServer;
  * @author Patryk Chrusciel
  * 
  */
-@Log4j
 public abstract class AbstractDeviceShellFactory implements Factory<Command> {
 	
+	private static final org.apache.log4j.Logger log = org.apache.log4j.Logger
+	.getLogger(AbstractDeviceShellFactory.class);
 	private static final String EXCLAMATION_MARK = "!";
 	
 	protected List<RequestEntryPojo> requests;
-	
-	@Getter
 	private String lastPrompt = "";
 	protected String host;
-	@Setter
-	protected ReportProvidingServer server;
+	private ReportProvidingServer server;
 	private RequestEntryControl requestEntryControl = new RequestEntryControl();
 	
 	/**
@@ -68,8 +62,8 @@ public abstract class AbstractDeviceShellFactory implements Factory<Command> {
 		
 		this.host = host;
 		try {
-			server = new ReportProvidingServer(host, report_port, port, testCaseFileName);
-			server.start();
+			setServer(new ReportProvidingServer(host, report_port, port, testCaseFileName));
+			getServer().start();
 		} catch (IOException e) {
 			log.error(e.getLocalizedMessage());
 		}
@@ -85,16 +79,16 @@ public abstract class AbstractDeviceShellFactory implements Factory<Command> {
 	
 	protected String createResponse(String command) throws IncorrectRequestOrderException,
 			NonExistingCommandException {
-		server.setTestCaseAsInProgress();
+		getServer().setTestCaseAsInProgress();
 		
 		log.debug("create response for command: " + command);
 		log.debug("request list size: " + requests.size());
 		
 		if (command.equals(EXCLAMATION_MARK)) {
-			return command + lastPrompt;
+			return command + getLastPrompt();
 		}
 		
-		server.setLastExecutedCommand(command);
+		getServer().setLastExecutedCommand(command);
 		checkIfCommandExists(command);
 		
 		RequestEntryPojo request = handleCommand(command);
@@ -103,7 +97,7 @@ public abstract class AbstractDeviceShellFactory implements Factory<Command> {
 	
 	private RequestEntryPojo handleCommand(String command) throws IncorrectRequestOrderException {
 		
-		server.increaeseLastCommandNo();
+		getServer().increaeseLastCommandNo();
 		
 		RequestEntryPojo request = checkCommandOrder(command);
 		afterTestCaseEndWithOrderCheck();
@@ -111,11 +105,11 @@ public abstract class AbstractDeviceShellFactory implements Factory<Command> {
 	}
 	
 	private void afterTestCaseEndWithOrderCheck() {
-		if (requests.size() == server.getLastCommandNo()) {
+		if (requests.size() == getServer().getLastCommandNo()) {
 			
-			server.setTestCaseEnd();
-			server.setLastCommandNo(-1);
-			log.info("Setting as test case end... with result: " + server.isTestCaseSuccess());
+			getServer().setTestCaseEnd();
+			getServer().setLastCommandNo(-1);
+			log.info("Setting as test case end... with result: " + getServer().isTestCaseSuccess());
 		} else {
 			log.debug("It is not the end of test...");
 		}
@@ -126,11 +120,11 @@ public abstract class AbstractDeviceShellFactory implements Factory<Command> {
 		
 		RequestEntryPojo request;
 		try {
-			log.debug("command order number is: " + server.getLastCommandNo());
+			log.debug("command order number is: " + getServer().getLastCommandNo());
 			log.debug("request list size: " + requests.size());
 			
-			request = requests.get(server.getLastCommandNo() - 1);
-			lastPrompt = request.getPrompt();
+			request = requests.get(getServer().getLastCommandNo() - 1);
+			setLastPrompt(request.getPrompt());
 			
 		} catch (IndexOutOfBoundsException e) {
 			// When checking commands order, commands will be sended till the
@@ -141,24 +135,24 @@ public abstract class AbstractDeviceShellFactory implements Factory<Command> {
 			// by him self so he can then continue bcs last command succesfully
 			// is provided and he will not see errors later, however test result
 			// will be given incorrect bcs one error had occure.
-			server.addNewError(currentCommand,
+			getServer().addNewError(currentCommand,
 					"There was too much commands or incorrect command used in overall test with command order check.");
 			
-			if (server.getLastCommandNo() != 0) {
+			if (getServer().getLastCommandNo() != 0) {
 				// it will call it only in first index out of bounds when
 				// command have been to much
-				server.setTestCaseEnd();
+				getServer().setTestCaseEnd();
 			}
 			
-			server.setLastCommandNo(-1);
-			server.setTestCaseInProgress(false);
+			getServer().setLastCommandNo(-1);
+			getServer().setTestCaseInProgress(false);
 			
 			throw new IncorrectRequestOrderException();
 			
 		}
 		
 		if (!request.matches(currentCommand)) {
-			server.addNewError(currentCommand, "Command order is incorrect. Was '" + currentCommand
+			getServer().addNewError(currentCommand, "Command order is incorrect. Was '" + currentCommand
 					+ "', should be '" + request.getCommand() + "'");
 			
 			afterTestCaseEndWithOrderCheck();
@@ -168,8 +162,8 @@ public abstract class AbstractDeviceShellFactory implements Factory<Command> {
 		
 		// If elswhere previously command order was not ok so don't bother to
 		// wait but only rest speed order check.
-		if (server.isAnyCommandError()) {
-			server.addNewError(currentCommand, "Command: '" + currentCommand
+		if (getServer().isAnyCommandError()) {
+			getServer().addNewError(currentCommand, "Command: '" + currentCommand
 					+ "' is in correct place. But previusly where incorrect placement of commands.");
 			
 			afterTestCaseEndWithOrderCheck();
@@ -185,11 +179,11 @@ public abstract class AbstractDeviceShellFactory implements Factory<Command> {
 	private void checkIfCommandExists(String command) throws NonExistingCommandException {
 		log.debug("check existing of command: " + command);
 		
-		if (server.getLastCommandNo() == -1)
-			server.setTestCaseInProgress(false);
+		if (getServer().getLastCommandNo() == -1)
+			getServer().setTestCaseInProgress(false);
 		
 		if (requestEntryControl.searchByCommand(requests, command) == null) {
-			server.addNewError(command, "Command '" + command + "' is incorrect");
+			getServer().addNewError(command, "Command '" + command + "' is incorrect");
 			throw new NonExistingCommandException();
 		}
 	}
@@ -215,6 +209,27 @@ public abstract class AbstractDeviceShellFactory implements Factory<Command> {
 	public ReportProvidingServer getServer() {
 		
 		return server;
+	}
+
+	/**
+	 * @param lastPrompt the lastPrompt to set
+	 */
+	public void setLastPrompt(String lastPrompt) {
+		this.lastPrompt = lastPrompt;
+	}
+
+	/**
+	 * @return the lastPrompt
+	 */
+	public String getLastPrompt() {
+		return lastPrompt;
+	}
+
+	/**
+	 * @param server the server to set
+	 */
+	public void setServer(ReportProvidingServer server) {
+		this.server = server;
 	}
 	
 }

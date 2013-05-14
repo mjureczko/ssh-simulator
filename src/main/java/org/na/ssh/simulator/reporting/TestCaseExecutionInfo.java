@@ -15,22 +15,104 @@
  */
 package org.na.ssh.simulator.reporting;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
 /**
  * Info about last command execution
  * 
  * @author Patryk Chrusciel
  * 
  */
-@AllArgsConstructor
-@Data
 public class TestCaseExecutionInfo {
+
+	/** AllArgsConstructor */
+	public TestCaseExecutionInfo(String firstErrorCommand,
+			String firstErrorCommandDetails, String commandErrorDetails,
+			String lastExecutedCommand, boolean isTestCaseSuccess,
+			boolean isTestCaseInProgress) {
+		this.setFirstErrorCommand(firstErrorCommand);
+		this.setFirstErrorCommandDetails(firstErrorCommandDetails);
+		this.setCommandErrorDetails(commandErrorDetails);
+		this.setLastExecutedCommand(lastExecutedCommand);
+		this.setTestCaseSuccess(isTestCaseSuccess);
+		this.setTestCaseInProgress(isTestCaseInProgress);
+	}
+
 	private String firstErrorCommand;
 	private String firstErrorCommandDetails;
 	private String commandErrorDetails;
 	private String lastExecutedCommand;
 	private boolean isTestCaseSuccess;
 	private boolean isTestCaseInProgress;
+	
+	/**
+	 * @param firstErrorCommand the firstErrorCommand to set
+	 */
+	public void setFirstErrorCommand(String firstErrorCommand) {
+		this.firstErrorCommand = firstErrorCommand;
+	}
+	/**
+	 * @return the firstErrorCommand
+	 */
+	public String getFirstErrorCommand() {
+		return firstErrorCommand;
+	}
+	/**
+	 * @param firstErrorCommandDetails the firstErrorCommandDetails to set
+	 */
+	public void setFirstErrorCommandDetails(String firstErrorCommandDetails) {
+		this.firstErrorCommandDetails = firstErrorCommandDetails;
+	}
+	/**
+	 * @return the firstErrorCommandDetails
+	 */
+	public String getFirstErrorCommandDetails() {
+		return firstErrorCommandDetails;
+	}
+	/**
+	 * @param commandErrorDetails the commandErrorDetails to set
+	 */
+	public void setCommandErrorDetails(String commandErrorDetails) {
+		this.commandErrorDetails = commandErrorDetails;
+	}
+	/**
+	 * @return the commandErrorDetails
+	 */
+	public String getCommandErrorDetails() {
+		return commandErrorDetails;
+	}
+	/**
+	 * @param lastExecutedCommand the lastExecutedCommand to set
+	 */
+	public void setLastExecutedCommand(String lastExecutedCommand) {
+		this.lastExecutedCommand = lastExecutedCommand;
+	}
+	/**
+	 * @return the lastExecutedCommand
+	 */
+	public String getLastExecutedCommand() {
+		return lastExecutedCommand;
+	}
+	/**
+	 * @param isTestCaseSuccess the isTestCaseSuccess to set
+	 */
+	public void setTestCaseSuccess(boolean isTestCaseSuccess) {
+		this.isTestCaseSuccess = isTestCaseSuccess;
+	}
+	/**
+	 * @return the isTestCaseSuccess
+	 */
+	public boolean isTestCaseSuccess() {
+		return isTestCaseSuccess;
+	}
+	/**
+	 * @param isTestCaseInProgress the isTestCaseInProgress to set
+	 */
+	public void setTestCaseInProgress(boolean isTestCaseInProgress) {
+		this.isTestCaseInProgress = isTestCaseInProgress;
+	}
+	/**
+	 * @return the isTestCaseInProgress
+	 */
+	public boolean isTestCaseInProgress() {
+		return isTestCaseInProgress;
+	}
 }

@@ -21,9 +21,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 
-import lombok.Getter;
-import lombok.extern.log4j.Log4j;
-
 import org.apache.sshd.server.Command;
 import org.apache.sshd.server.Environment;
 import org.apache.sshd.server.ExitCallback;
@@ -36,19 +33,18 @@ import org.na.ssh.simulator.exceptions.NonExistingCommandException;
  * @author Patryk Chrusciel
  * 
  */
-@Log4j
 public class DeviceShell implements Command, Runnable {
 	
-	private AbstractDeviceShellFactory deviceShellFactory;
+	private static final org.apache.log4j.Logger log = org.apache.log4j.Logger
+	.getLogger(DeviceShell.class);
 	
+	private AbstractDeviceShellFactory deviceShellFactory;
 	protected InputStream in;
 	protected OutputStream out;
 	protected OutputStream err;
 	protected ExitCallback callback;
 	protected Environment environment;
 	protected Thread thread;
-	
-	@Getter
 	private boolean isShellRunning;
 	
 	public DeviceShell(AbstractDeviceShellFactory abstractDeviceShellFactory) {
@@ -66,7 +62,7 @@ public class DeviceShell implements Command, Runnable {
 	@Override
 	public void run() {
 		BufferedReader r = new BufferedReader(new InputStreamReader(in));
-		isShellRunning = true;
+		setShellRunning(true);
 		StringBuffer sb = new StringBuffer();
 		
 		try {
@@ -79,7 +75,7 @@ public class DeviceShell implements Command, Runnable {
 		}
 		
 		try {
-			while (isShellRunning) {
+			while (isShellRunning()) {
 				
 				int b = r.read();
 				
@@ -94,7 +90,7 @@ public class DeviceShell implements Command, Runnable {
 					System.out.println("Command: " + command);
 					
 					if ("sshexit".equals(command)) {
-						isShellRunning = false;
+						setShellRunning(false);
 						break;
 						
 					}
@@ -184,7 +180,7 @@ public class DeviceShell implements Command, Runnable {
 	 * Stop shell
 	 */
 	public void stopShell() {
-		isShellRunning = false;
+		setShellRunning(false);
 	}
 	
 	@Override
@@ -209,7 +205,21 @@ public class DeviceShell implements Command, Runnable {
 	
 	@Override
 	public void destroy() {
-		isShellRunning = false;
+		setShellRunning(false);
 		thread.interrupt();
+	}
+
+	/**
+	 * @param isShellRunning the isShellRunning to set
+	 */
+	public void setShellRunning(boolean isShellRunning) {
+		this.isShellRunning = isShellRunning;
+	}
+
+	/**
+	 * @return the isShellRunning
+	 */
+	public boolean isShellRunning() {
+		return isShellRunning;
 	}
 }

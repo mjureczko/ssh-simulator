@@ -15,8 +15,6 @@
  */
 package org.na.ssh.simulator.authentication;
 
-import lombok.extern.log4j.Log4j;
-
 import org.apache.sshd.server.PasswordAuthenticator;
 import org.apache.sshd.server.session.ServerSession;
 
@@ -26,8 +24,10 @@ import org.apache.sshd.server.session.ServerSession;
  * @author Patryk Chrusciel
  * 
  */
-@Log4j
 public class ConnectionAuthenticator implements PasswordAuthenticator {
+	
+	private static final org.apache.log4j.Logger log = org.apache.log4j.Logger
+	.getLogger(ConnectionAuthenticator.class);
 	
 	private String login;
 	private String password;

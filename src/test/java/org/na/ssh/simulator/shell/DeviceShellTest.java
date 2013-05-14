@@ -15,7 +15,7 @@
  */
 package org.na.ssh.simulator.shell;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -23,10 +23,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import javax.swing.text.StyleConstants.CharacterConstants;
-
-import lombok.extern.log4j.Log4j;
 
 import org.apache.sshd.server.ExitCallback;
 import org.easymock.EasyMock;
@@ -40,8 +36,11 @@ import org.na.ssh.simulator.exceptions.NonExistingCommandException;
  * @author Patryk Chrusciel
  * 
  */
-@Log4j
 public class DeviceShellTest {
+
+	private static final org.apache.log4j.Logger log = org.apache.log4j.Logger
+			.getLogger(DeviceShellTest.class);
+
 	/**
 	 * {@link DeviceShell}
 	 * 
@@ -57,41 +56,43 @@ public class DeviceShellTest {
 		String msg = "message";
 		AbstractDeviceShellFactory abstractDeviceShellFactory = EasyMock
 				.createMock(AbstractDeviceShellFactory.class);
-		
-		EasyMock.expect(abstractDeviceShellFactory.createResponse(cmd)).andReturn((msg));
-		EasyMock.expect(abstractDeviceShellFactory.getDelayInMs(cmd)).andReturn(0l);
-		
+
+		EasyMock.expect(abstractDeviceShellFactory.createResponse(cmd))
+				.andReturn((msg));
+		EasyMock.expect(abstractDeviceShellFactory.getDelayInMs(cmd))
+				.andReturn(0l);
+
 		EasyMock.replay(abstractDeviceShellFactory);
-		
+
 		DeviceShell ds = new DeviceShell(abstractDeviceShellFactory);
-		
+
 		OutputStream os = new ByteArrayOutputStream();
 		InputStream is = new ByteArrayInputStream((cmd + "\n").getBytes());
-		
+
 		ds.setInputStream(new BufferedInputStream(is));
 		ds.setOutputStream(os);
 		ds.setExitCallback(new ExitCallback() {
-			
+
 			@Override
 			public void onExit(int exitValue, String exitMessage) {
 				log.info("On exit");
 			}
-			
+
 			@Override
 			public void onExit(int exitValue) {
 				Assert.assertTrue(true);
 			}
 		});
-		
+
 		ds.start(null);
-		
+
 		Thread.sleep(2000);
-		
+
 		ds.destroy();
-		
+
 		EasyMock.verify(abstractDeviceShellFactory);
-		
+
 		assertFalse(ds.isShellRunning());
-		
+
 	}
 }

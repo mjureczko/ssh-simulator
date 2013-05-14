@@ -16,11 +16,9 @@
 package org.na.ssh.simulator.reporting.helpers;
 
 import java.io.IOException;
-import lombok.Setter;
-import lombok.extern.log4j.Log4j;
 
-import org.na.ssh.simulator.reporting.TestCaseExecutionInfo;
 import org.na.ssh.simulator.reporting.ReportProvidingClient;
+import org.na.ssh.simulator.reporting.TestCaseExecutionInfo;
 import org.na.ssh.simulator.reporting.commands.CommandToServer;
 import org.na.ssh.simulator.reporting.messages.MessageToClient;
 import org.na.ssh.simulator.reporting.messages.MessageToServer;
@@ -30,16 +28,17 @@ import org.na.ssh.simulator.reporting.messages.MessageToServer;
  * @author Patryk Chrusciel
  * 
  */
-@Log4j
 public class ReportProvidingClientHelper {
-	
-	@Setter
+
+	private static final org.apache.log4j.Logger log = org.apache.log4j.Logger
+			.getLogger(ReportProvidingClientHelper.class);
+
 	private ReportProvidingClient client;
-	
+
 	protected ReportProvidingClientHelper() {
-		
+
 	}
-	
+
 	/**
 	 * Default to Start by Selenium (reporting port is set to zero so reporting
 	 * socket is not started)
@@ -48,11 +47,11 @@ public class ReportProvidingClientHelper {
 	 * @throws IOException
 	 */
 	public ReportProvidingClientHelper(String host) throws IOException {
-		
-		client = new ReportProvidingClient(host, 2004);
-		
+
+		setClient(new ReportProvidingClient(host, 2004));
+
 	}
-	
+
 	/**
 	 * Cuntructor to use reporting server if needed
 	 * 
@@ -60,12 +59,13 @@ public class ReportProvidingClientHelper {
 	 * @param report_port
 	 * @throws IOException
 	 */
-	public ReportProvidingClientHelper(String host, int report_port) throws IOException {
-		
-		client = new ReportProvidingClient(host, report_port);
-		
+	public ReportProvidingClientHelper(String host, int report_port)
+			throws IOException {
+
+		setClient(new ReportProvidingClient(host, report_port));
+
 	}
-	
+
 	/**
 	 * @return
 	 * @throws Exception
@@ -73,16 +73,17 @@ public class ReportProvidingClientHelper {
 	 */
 	public TestCaseExecutionInfo getTestCaseExecutionInfo() throws Exception {
 		log.debug("Get test case execution status");
-		MessageToClient msg = client.sendMsg(new MessageToServer(
-				CommandToServer.WAS_TEST_CASE_SUCCESS));
-		
-		TestCaseExecutionInfo info = new TestCaseExecutionInfo(msg.getFirstErrorCommand(), msg.getFirstErrorCommandDetails(),
-				msg.getCommandErrorDetails(), msg.getLastExecutedCommand(), msg.isTestCaseSuccess(),
-				msg.isTestCaseInProgress());
-		
+		MessageToClient msg = getClient().sendMsg(
+				new MessageToServer(CommandToServer.WAS_TEST_CASE_SUCCESS));
+
+		TestCaseExecutionInfo info = new TestCaseExecutionInfo(
+				msg.getFirstErrorCommand(), msg.getFirstErrorCommandDetails(),
+				msg.getCommandErrorDetails(), msg.getLastExecutedCommand(),
+				msg.isTestCaseSuccess(), msg.isTestCaseInProgress());
+
 		return info;
 	}
-	
+
 	/**
 	 * Reset test case status
 	 * 
@@ -90,6 +91,22 @@ public class ReportProvidingClientHelper {
 	 * @throws ClassNotFoundException
 	 */
 	public void resetTestCaseStatus() throws Exception {
-		client.sendMsg(new MessageToServer(CommandToServer.RESET_TEST_CASE_STATUS));
+		getClient().sendMsg(
+				new MessageToServer(CommandToServer.RESET_TEST_CASE_STATUS));
+	}
+
+	/**
+	 * @param client
+	 *            the client to set
+	 */
+	public void setClient(ReportProvidingClient client) {
+		this.client = client;
+	}
+
+	/**
+	 * @return the client
+	 */
+	public ReportProvidingClient getClient() {
+		return client;
 	}
 }

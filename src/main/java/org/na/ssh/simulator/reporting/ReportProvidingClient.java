@@ -20,8 +20,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-import lombok.extern.log4j.Log4j;
-
 import org.na.ssh.simulator.reporting.messages.MessageToClient;
 import org.na.ssh.simulator.reporting.messages.MessageToServer;
 
@@ -31,21 +29,23 @@ import org.na.ssh.simulator.reporting.messages.MessageToServer;
  * @author Patryk Chrusciel
  * 
  */
-@Log4j
 public class ReportProvidingClient {
-	
+
+	private static final org.apache.log4j.Logger log = org.apache.log4j.Logger
+			.getLogger(ReportProvidingClient.class);
+
 	private Socket requestSocket;
 	private ObjectOutputStream out;
 	private ObjectInputStream in;
 	private MessageToClient msgToClient = new MessageToClient();
 	private String host;
 	private int port;
-	
+
 	public ReportProvidingClient(String host, int port) throws IOException {
 		this.host = host;
 		this.port = port;
 	}
-	
+
 	/**
 	 * Send msg
 	 * 
@@ -53,15 +53,16 @@ public class ReportProvidingClient {
 	 * @return
 	 * @throws Exception
 	 */
-	public MessageToClient sendMsg(MessageToServer cmdToServer) throws Exception {
+	public MessageToClient sendMsg(MessageToServer cmdToServer)
+			throws Exception {
 		try {
 			requestSocket = new Socket(host, port);
-			log.debug("Connected to " + host + " in port "+port);
+			log.debug("Connected to " + host + " in port " + port);
 			out = new ObjectOutputStream(requestSocket.getOutputStream());
 			out.flush();
 			in = new ObjectInputStream(requestSocket.getInputStream());
 			return sendMessageAndGetResponse(cmdToServer);
-			
+
 		} finally {
 			try {
 				if (in != null) {
@@ -80,9 +81,9 @@ public class ReportProvidingClient {
 				log.error(e.getLocalizedMessage());
 			}
 		}
-		
+
 	}
-	
+
 	/**
 	 * 
 	 * @param cmd
@@ -90,14 +91,15 @@ public class ReportProvidingClient {
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */
-	private MessageToClient sendMessageAndGetResponse(MessageToServer msgToServer)
-			throws IOException, ClassNotFoundException {
+	private MessageToClient sendMessageAndGetResponse(
+			MessageToServer msgToServer) throws IOException,
+			ClassNotFoundException {
 		sendMessage(msgToServer);
 		msgToClient = (MessageToClient) in.readObject();
 		log.debug("server> " + msgToClient);
 		return msgToClient;
 	}
-	
+
 	private void sendMessage(MessageToServer msg) {
 		try {
 			out.writeObject(msg);
@@ -107,5 +109,5 @@ public class ReportProvidingClient {
 			log.error(e.getLocalizedMessage());
 		}
 	}
-	
+
 }

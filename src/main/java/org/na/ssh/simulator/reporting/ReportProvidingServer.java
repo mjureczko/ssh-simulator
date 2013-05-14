@@ -22,10 +22,6 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.log4j.Log4j;
-
 import org.na.ssh.simulator.reporting.commands.CommandToServer;
 import org.na.ssh.simulator.reporting.messages.MessageToClient;
 import org.na.ssh.simulator.reporting.messages.MessageToServer;
@@ -36,35 +32,24 @@ import org.na.ssh.simulator.reporting.messages.MessageToServer;
  * @author Patryk Chrusciel
  * 
  */
-@Log4j
 public class ReportProvidingServer extends Thread {
-	@Setter
+	private static final org.apache.log4j.Logger log = org.apache.log4j.Logger
+	.getLogger(ReportProvidingServer.class);
+
 	private ServerSocket providerSocket;
 	private Socket connection = null;
 	private ObjectOutputStream out;
 	private ObjectInputStream in;
 	private MessageToServer msgToServer;
 	private int port;
-	private String bindAddress;
-	
+	private String bindAddress;	
 	private StringBuilder commandsErrorDetails = new StringBuilder();
-	
-	@Getter
-	@Setter
 	private String lastExecutedCommand = "";
-	
-	@Getter
 	private boolean isTestCaseSuccess = true;
-	
-	@Setter
-	private boolean isTestCaseInProgress = false;
-	
-	public int lastCommandNo = 0;
-	
+	private boolean isTestCaseInProgress = false;	
+	public int lastCommandNo = 0;	
 	private boolean haveToRun;
 	private boolean isReportServerToBeRun;
-	
-	@Getter
 	private boolean isAnyCommandError = false;
 	
 	private String firstErrorCommand = "";
@@ -76,12 +61,11 @@ public class ReportProvidingServer extends Thread {
 	 * Reset status of test case execution
 	 */
 	public void resetTestCase() {
-		this.lastExecutedCommand = "";
+		this.setLastExecutedCommand("");
 		this.commandsErrorDetails = new StringBuilder();
-		this.isTestCaseSuccess = true;
-		this.isTestCaseInProgress = false;
+		this.setTestCaseSuccess(true);
+		this.setTestCaseInProgress(false);
 		setLastCommandNo(0);
-		this.isAnyCommandError = false;
 		this.firstErrorCommand = "";
 		this.firstErrorCommandDetails = "";
 	}
@@ -90,14 +74,14 @@ public class ReportProvidingServer extends Thread {
 	 * Set test case as in progress
 	 */
 	public void setTestCaseAsInProgress() {
-		this.isTestCaseInProgress = true;
-		this.isTestCaseSuccess = false;
+		this.setTestCaseInProgress(true);
+		setTestCaseSuccess(false);
 	}
 	
 	public void setTestCaseEnd() {
 		
-		isTestCaseSuccess = !isAnyCommandError;
-		isTestCaseInProgress = false;
+		setTestCaseSuccess(!isAnyCommandError());
+		setTestCaseInProgress(false);
 		
 		log.info(getStatusText());
 		
@@ -117,34 +101,29 @@ public class ReportProvidingServer extends Thread {
 				+ "\n\n First Error:\n "
 				+ firstErrorCommandDetails
 				+ "\n\n LAST COMMAND: "
-				+ lastExecutedCommand
+				+ getLastExecutedCommand()
 				+ " \n\n ALL ERRORS:\n "
 				+ commandsErrorDetails
 				+ "\n\n Test in progress flag: "
-				+ isTestCaseInProgress
+				+ isTestCaseInProgress()
 				+ "\n Test Result flag:"
-				+ isTestCaseSuccess
+				+ isTestCaseSuccess()
 				+ "\n-------------------------------------------------------\n\n";
 		
 		return status;
 	}
 	
-	/**
-	 * 
-	 * @param lastCommandExecutedOnSshServer
-	 * @param lastCommandSuccess
-	 * @param lastCommandErrorDetails
-	 */
+	/**	 */
 	public void addNewError(String lastExecutedCommand, String lastCommandErrorDetails) {
 		if (this.firstErrorCommand.equals(""))
 			firstErrorCommand = lastExecutedCommand;
 		if (this.firstErrorCommandDetails.equals(""))
 			firstErrorCommandDetails = lastCommandErrorDetails;
-		this.isAnyCommandError = true;
-		this.lastExecutedCommand = lastExecutedCommand;
+		this.setAnyCommandError(true);
+		this.setLastExecutedCommand(lastExecutedCommand);
 		this.commandsErrorDetails = commandsErrorDetails.append(lastCommandErrorDetails
 				+ "\n\n-----------------\n\n");
-		this.isTestCaseSuccess = false;
+		setTestCaseSuccess(false);
 	}
 	
 	public ReportProvidingServer(String bindAddress, int port, int portSsh, String testCaseFileName)
@@ -167,11 +146,11 @@ public class ReportProvidingServer extends Thread {
 				try {
 					// if report port is zero then it is not in use
 					
-					providerSocket = new ServerSocket(port, 10, InetAddress.getByName(bindAddress));
+					setProviderSocket(new ServerSocket(port, 10, InetAddress.getByName(bindAddress)));
 					
 					log.debug("Waiting for a new connection...");
 					
-					connection = providerSocket.accept();
+					connection = getProviderSocket().accept();
 					
 					log.debug("Connection received from "
 							+ connection.getInetAddress().getHostName() + ".");
@@ -193,8 +172,8 @@ public class ReportProvidingServer extends Thread {
 						if (out != null) {
 							out.close();
 						}
-						if (providerSocket != null) {
-							providerSocket.close();
+						if (getProviderSocket() != null) {
+							getProviderSocket().close();
 						}
 					} catch (IOException e) {
 						log.error("IOException : " + e.getLocalizedMessage());
@@ -213,13 +192,13 @@ public class ReportProvidingServer extends Thread {
 			resetTestCase();
 			
 			sendMessage(new MessageToClient(firstErrorCommand, firstErrorCommandDetails,
-					commandsErrorDetails.toString(), lastExecutedCommand, isTestCaseSuccess,
-					isTestCaseInProgress));
+					commandsErrorDetails.toString(), getLastExecutedCommand(), isTestCaseSuccess(),
+					isTestCaseInProgress()));
 		} else if (msgToServer.getCmdToServer() == CommandToServer.WAS_TEST_CASE_SUCCESS) {
 			log.debug("Returning test case state.");
 			sendMessage(new MessageToClient(firstErrorCommand, firstErrorCommandDetails,
-					commandsErrorDetails.toString(), lastExecutedCommand, isTestCaseSuccess,
-					isTestCaseInProgress));
+					commandsErrorDetails.toString(), getLastExecutedCommand(), isTestCaseSuccess(),
+					isTestCaseInProgress()));
 		} else {
 			log.error("Incorrect command from client exception.");
 			throw new Exception("Incorrect command from client.");
@@ -242,7 +221,7 @@ public class ReportProvidingServer extends Thread {
 			log.info("REPORT SERVER START on port: " + port);
 		resetTestCase();
 		haveToRun = true;
-		this.isTestCaseSuccess = false;
+		setTestCaseSuccess(false);
 		super.start();
 	}
 	
@@ -255,8 +234,8 @@ public class ReportProvidingServer extends Thread {
 	
 	public TestCaseExecutionInfo getTestCaseStatusDirectly() {
 		TestCaseExecutionInfo info = new TestCaseExecutionInfo(firstErrorCommand,
-				firstErrorCommandDetails, commandsErrorDetails.toString(), lastExecutedCommand,
-				isTestCaseSuccess, isTestCaseInProgress);
+				firstErrorCommandDetails, commandsErrorDetails.toString(), getLastExecutedCommand(),
+				isTestCaseSuccess(), isTestCaseInProgress());
 		
 		return info;
 	}
@@ -268,13 +247,13 @@ public class ReportProvidingServer extends Thread {
 	
 	public void setHaveToFinish() {
 		haveToRun = false;
-		if (providerSocket != null) {
+		if (getProviderSocket() != null) {
 			try {
-				providerSocket.close();
+				getProviderSocket().close();
 			} catch (IOException e) {
 				// Not needed, bcs it is only trying to close.
 			}
-			providerSocket = null;
+			setProviderSocket(null);
 			try {
 				finalize();
 			} catch (Throwable e) {
@@ -303,5 +282,76 @@ public class ReportProvidingServer extends Thread {
 	public void increaeseLastCommandNo() {
 		lastCommandNo++;
 	}
+
+	/**
+	 * @param providerSocket the providerSocket to set
+	 */
+	public void setProviderSocket(ServerSocket providerSocket) {
+		this.providerSocket = providerSocket;
+	}
+
+	/**
+	 * @param lastExecutedCommand the lastExecutedCommand to set
+	 */
+	public void setLastExecutedCommand(String lastExecutedCommand) {
+		this.lastExecutedCommand = lastExecutedCommand;
+	}
+
+	/**
+	 * @return the lastExecutedCommand
+	 */
+	public String getLastExecutedCommand() {
+		return lastExecutedCommand;
+	}
+
+	/**
+	 * @return the isTestCaseSuccess
+	 */
+	public boolean isTestCaseSuccess() {
+		return isTestCaseSuccess;
+	}
+
+	/**
+	 * @param isTestCaseInProgress the isTestCaseInProgress to set
+	 */
+	public void setTestCaseInProgress(boolean isTestCaseInProgress) {
+		this.isTestCaseInProgress = isTestCaseInProgress;
+	}
+
+	/**
+	 * @return the isAnyCommandError
+	 */
+	public boolean isAnyCommandError() {
+		return isAnyCommandError;
+	}
+
+	/**
+	 * @return the isTestCaseInProgress
+	 */
+	private boolean isTestCaseInProgress() {
+		return isTestCaseInProgress;
+	}
+
+	/**
+	 * @param isAnyCommandError the isAnyCommandError to set
+	 */
+	public void setAnyCommandError(boolean isAnyCommandError) {
+		this.isAnyCommandError = isAnyCommandError;
+	}
+
+	/**
+	 * @return the providerSocket
+	 */
+	public ServerSocket getProviderSocket() {
+		return providerSocket;
+	}
+
+	/**
+	 * @param isTestCaseSuccess the isTestCaseSuccess to set
+	 */
+	public void setTestCaseSuccess(boolean isTestCaseSuccess) {
+		this.isTestCaseSuccess = isTestCaseSuccess;
+	}
+
 	
 }

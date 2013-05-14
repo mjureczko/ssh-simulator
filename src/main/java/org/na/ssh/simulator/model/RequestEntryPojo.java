@@ -18,9 +18,6 @@ package org.na.ssh.simulator.model;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import lombok.Getter;
-import lombok.Setter;
-
 /**
  * Entry for response
  * 
@@ -29,30 +26,14 @@ import lombok.Setter;
  */
 
 public class RequestEntryPojo {
-	
-	@Getter
+
 	private String command;
-	
-	/**
-	 * Setter
-	 */
-	public void setCommand(String command) {
-		this.command = command;
-		createCommandPattern(command);
-	}
-	
-	@Getter
-	@Setter
 	private String response;
-	@Getter
-	@Setter
 	private String prompt;
-	@Getter
-	@Setter
 	private long delayInMs;
-	
+
 	private Pattern commandPattern;
-	
+
 	/**
 	 * 
 	 * @param response
@@ -63,18 +44,19 @@ public class RequestEntryPojo {
 	 *            How much time should host wait for response. Value given in
 	 *            ms.
 	 */
-	public RequestEntryPojo(String response, String prompt, long delayInMs, String command) {
+	public RequestEntryPojo(String response, String prompt, long delayInMs,
+			String command) {
 		this.command = command;
-		this.response = response;
-		this.delayInMs = delayInMs;
+		this.setResponse(response);
+		this.setDelayInMs(delayInMs);
 		if (prompt == null || prompt.equals("") || prompt.length() == 1) {
-			this.prompt = "\n #";
+			this.setPrompt("\n #");
 		} else {
-			this.prompt = "\n" + prompt;
+			this.setPrompt("\n" + prompt);
 		}
 		createCommandPattern(command);
 	}
-	
+
 	/**
 	 * 
 	 * @param response
@@ -85,7 +67,7 @@ public class RequestEntryPojo {
 	public RequestEntryPojo(String response, String prompt, String command) {
 		this(response, prompt, 0, command);
 	}
-	
+
 	private void createCommandPattern(String command) {
 		try {
 			commandPattern = Pattern.compile(command);
@@ -93,7 +75,7 @@ public class RequestEntryPojo {
 			commandPattern = null;
 		}
 	}
-	
+
 	/**
 	 * checks if command matches the response command or response command regex
 	 * 
@@ -105,11 +87,57 @@ public class RequestEntryPojo {
 		if (command.equals(this.command)) {
 			return true;
 		}
-		
+
 		if (commandPattern != null) {
 			Matcher matcher = commandPattern.matcher(command);
 			return matcher.matches();
 		}
 		return false;
+	}
+
+	public String getCommand() {
+		return command;
+	}
+
+	/** Setter */
+	public void setCommand(String command) {
+		this.command = command;
+		createCommandPattern(command);
+	}
+	
+	public void setResponse(String response) {
+		this.response = response;
+	}
+
+	public String getResponse() {
+		return response;
+	}
+
+	/**
+	 * @param prompt the prompt to set
+	 */
+	public void setPrompt(String prompt) {
+		this.prompt = prompt;
+	}
+
+	/**
+	 * @return the prompt
+	 */
+	public String getPrompt() {
+		return prompt;
+	}
+
+	/**
+	 * @param delayInMs the delayInMs to set
+	 */
+	public void setDelayInMs(long delayInMs) {
+		this.delayInMs = delayInMs;
+	}
+
+	/**
+	 * @return the delayInMs
+	 */
+	public long getDelayInMs() {
+		return delayInMs;
 	}
 }
