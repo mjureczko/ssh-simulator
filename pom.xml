@@ -10,7 +10,7 @@
     
 	<artifactId>ssh-simulator</artifactId>
 	<name>SSH based simulator of network devices</name>
-	<groupId>org.na</groupId>
+	<groupId>com.networkedassets</groupId>
 	<version>0.1-SNAPSHOT</version>
 
     <licenses>
