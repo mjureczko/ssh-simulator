@@ -10,7 +10,7 @@
 	<artifactId>ssh-simulator</artifactId>
 	<name>SSH based simulator of network devices</name>
 	<groupId>com.networkedassets</groupId>
-	<version>0.2-SNAPSHOT</version>
+	<version>0.1-SNAPSHOT</version>
 
 	<licenses>
 		<license>
@@ -163,9 +163,9 @@
 		<url>http://www.networkedassets.pl</url>
 	</organization>
 	<scm>
-		<url>https://github.com/NetworkedAssets/ssh-simulator.git</url>
-		<connection>scm:git:https://github.com/NetworkedAssets/ssh-simulator.git</connection>
-		<developerConnection>scm:git:https://github.com/NetworkedAssets/ssh-simulator.git</developerConnection>
+		<url>scm:git:git@github.com:NetworkedAssets/ssh-simulator.git</url>
+		<connection>scm:git:git@github.com:NetworkedAssets/ssh-simulator.git</connection>
+		<developerConnection>scm:git:git@github.com:NetworkedAssets/ssh-simulator.git</developerConnection>
 	</scm>
 	<ciManagement>
 		<url>http://tanatos:8080/hudson/job/ssh-simulator/</url>
