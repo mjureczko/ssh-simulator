@@ -58,7 +58,8 @@ Getting started</p>
 <div class="highlight"><pre><span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
  
 <span class="nt">&lt;test_case</span> <span class="na">xmlns:tcs=</span><span class="s">"test_case_schema.xsd"</span>
-    <span class="na">xmlns:xsi=</span><span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span> <span class="na">xmlns:xsd=</span><span class="s">"http://www.w3.org/2001/XMLSchema"</span>
+    <span class="na">xmlns:xsi=</span><span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span> 
+    <span class="na">xmlns:xsd=</span><span class="s">"http://www.w3.org/2001/XMLSchema"</span>
     <span class="na">xmlns=</span><span class="s">"http://www.networkedassets.com/test_case_schema"</span><span class="nt">&gt;</span>
  
     <span class="nt">&lt;login&gt;</span>login<span class="nt">&lt;/login&gt;</span>
@@ -75,7 +76,7 @@ Getting started</p>
 <span class="nt">&lt;/test_case&gt;</span>
 </pre></div>
 
-<p>The configuration file contains a <code><pre>&lt;test_case&gt;</pre></code> entry that represents the sequence of requests and responses that should be executed during test. At the top of <code>&lt;test_case&gt;</code> node are credentials that the client should use to connect to the simulator followed by a <code>&lt;device_type&gt;</code>. A number of device types are supported i.e. ASR, CMTS, CNR, Router7600. This parameter affects the behavior only slightly, namely simulator works like the selected device with respect to control characters (e.g. carriage return, echoes, etc.) Subsequently comes a series of <code>&lt;request&gt;</code> nodes (on the presented Listing there is only one) that define the expected client requests and instructs the simulator how should they be responded. The <code>&lt;request&gt;</code> node can have a delay_in_ms parameter. This parameter tells the simulator how long should he wait before sending the response (helpful in simulating long lasting commands). The <code>&lt;request_command&gt;</code> defines the content of expected client request; <code>&lt;response_message&gt;</code> stands for the response that will be send back to the client by the simulator; and eventually the <code>&lt;response_prompt&gt;</code> instructs how the command line prompt should look like. The configuration file should be saved in (src/test/resources/)TestCasesXmls directory.</p>
+<p>The configuration file contains a <code>&lt;test_case&gt;</code> entry that represents the sequence of requests and responses that should be executed during test. At the top of <code>&lt;test_case&gt;</code> node are credentials that the client should use to connect to the simulator followed by a <code>&lt;device_type&gt;</code>. A number of device types are supported i.e. ASR, CMTS, CNR, Router7600. This parameter affects the behavior only slightly, namely simulator works like the selected device with respect to control characters (e.g. carriage return, echoes, etc.) Subsequently comes a series of <code>&lt;request&gt;</code> nodes (on the presented Listing there is only one) that define the expected client requests and instructs the simulator how should they be responded. The <code>&lt;request&gt;</code> node can have a delay_in_ms parameter. This parameter tells the simulator how long should he wait before sending the response (helpful in simulating long lasting commands). The <code>&lt;request_command&gt;</code> defines the content of expected client request; <code>&lt;response_message&gt;</code> stands for the response that will be send back to the client by the simulator; and eventually the <code>&lt;response_prompt&gt;</code> instructs how the command line prompt should look like. The configuration file should be saved in (src/test/resources/)TestCasesXmls directory.</p>
 
 <p>When the XML configuration file is ready, it is enough to use it in a JUnit test case as it is presented on Listing 3.</p>
 
@@ -84,8 +85,8 @@ Getting started</p>
 <div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyTest</span> <span class="kd">extends</span> <span class="n">SshSimulatorGenericTestCase</span> <span class="o">{</span>
     <span class="nd">@Test</span>
     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">sampleTest</span><span class="o">()</span> <span class="o">{</span>
-        <span class="n">initializeNewSshServer</span><span class="o">(</span><span class="n">xmlConfigFileName</span><span class="o">,</span> <span class="s">"192.168.10.180"</span><span class="o">,</span> <span class="mi">22</span><span class="o">);</span>
-        <span class="c1">//do the tests here</span>
+      <span class="n">initializeNewSshServer</span><span class="o">(</span><span class="n">xmlConfigFileName</span><span class="o">,</span> <span class="s">"192.168.10.180"</span><span class="o">,</span> <span class="mi">22</span><span class="o">);</span>
+      <span class="c1">//do the tests here</span>
     <span class="o">}</span>
 <span class="o">}</span>
 </pre></div>
