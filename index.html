@@ -37,7 +37,9 @@
 <p>Does your application communicate through SSH? Do you want to ensure that these features are working properly in a number of more or less sophisticated test scenarios? If the answer is yes, then the SSH-Simulator can be very handy for you. SSH-Simulator is a simple, JUnit compatible tool for launching virtual devices, that communicate in SSH and automatically verifies the communication correctness.</p>
 
 <p>The SSH-Simulator can be used in two ways. It is possible to launch it as an SSH server. In such case the simulator is waiting for incoming connections and when a client appears verifies whether the communication corresponds with a user defined schema, i.e. the simulator must be told which requests should arrive and how should they be responded - when something is going differently an error is reported. It is also possible (which is probably more interesting) to launch the SSH-Simulator in a JUnit test. In such scenario the simulator is launched and shut down in the context of a single test, and hence it is possible to define different communication scenarios for each test and release all resources instantly after test execution.
-Getting started</p>
+</p>
+
+<h1>Getting started</h1>
 
 <p>The easiest way to add the SSH-Simulator to a project is to use Apache Maven. It is enough to add following entries to the pom.xml file:</p>
 
